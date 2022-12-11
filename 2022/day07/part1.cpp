@@ -7,6 +7,10 @@ void process_instruction(std::string line, TreeNode * & root, TreeNode * & curre
 void process_cd(const std::string target_location, TreeNode * & root, TreeNode * & current_location);
 void process_ls(TreeNode * & current_location, std::ifstream & inputfile);
 
+void process_filesizes(TreeNode * & root, int & running_total);
+
+void recursive_delete_tree(TreeNode * & root);
+
 void process_instruction(std::string line, TreeNode * & root, TreeNode * & current_location, std::ifstream & inputfile){
     if(line[0] != '$'){
         //something has gone wrong
@@ -58,6 +62,21 @@ void process_cd(const std::string target_location, TreeNode * & root, TreeNode *
 }
 
 void process_ls(TreeNode * & current_location, std::ifstream & inputfile){
+    //we already did this one
+    if(current_location->get_has_been_listed()){
+        std::cout << "we already ls'd here in " << current_location->get_name() << std::endl;
+        std::cout << "proof: " << current_location->get_children().size() << std::endl;
+        //advance inputfile to next command
+        while(inputfile.good()){
+            if(inputfile.peek() == '$') return;
+            std::string line = "";
+            getline(inputfile, line);
+            if(line == "") return;
+        }
+        return;
+    }
+
+    current_location->set_has_been_listed(true);
     while(inputfile.good()){
         //we are done once we reach the next command
         if(inputfile.peek() == '$') return;
@@ -85,10 +104,42 @@ void process_ls(TreeNode * & current_location, std::ifstream & inputfile){
     }
 }
 
+void process_filesizes(TreeNode * & root, int & running_total){
+    if(root->is_file()){
+        return;
+    }
+    for(int i = 0; i < root->get_children().size(); ++i){
+        TreeNode * current_child = root->get_children()[i];
+        process_filesizes(current_child, running_total);
+        int child_size = current_child->get_filesize();
+        root->set_filesize(root->get_filesize() + child_size);
+    }
+
+    if(root->get_filesize() < 100000){
+        running_total += root->get_filesize();
+    }
+
+    std::cout << "DIR " << root->get_name() << " : " << root->get_filesize() << std::endl;
+}
+
+void recursive_delete_tree(TreeNode * & root){
+    if(root->is_file()){
+        std::cout << "deleting file " << root->get_name() << std::endl;
+        delete root;
+        return;
+    }
+
+    for(int i = 0; i < root->get_children().size(); ++i){
+        recursive_delete_tree(root->get_children()[i]);
+    }
+    std::cout << "deleting dir " << root->get_name() << std::endl;
+    delete root;
+}
+
 int main(){
     std::cout << "On the matter of traversing the elves' file system and locating files to destroy:\n";
 
-    std::ifstream inputfile("shortinput");
+    std::ifstream inputfile("input");
 
     if(!inputfile.is_open()){
         std::cout << "could not open file :(\n";
@@ -115,10 +166,16 @@ int main(){
         process_instruction(line, root, current_position, inputfile);
     }
 
+    int running_total = 0;
+    process_filesizes(root, running_total);
 
     std::cout << "complete.\n";
+    std::cout << "deleting tree.\n";
 
-    std::cout << "size of / " << root->get_children().size() << std::endl;
+    recursive_delete_tree(root);
+
+    //std::cout << "size of / " << root->get_children().size() << std::endl;
+    std::cout << "running total: " << running_total << std::endl;
 
     inputfile.close();
     return 0;

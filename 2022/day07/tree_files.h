@@ -11,6 +11,7 @@ class TreeNode {
         int filesize;
         std::vector< TreeNode * > children;
         TreeNode * parent;
+        bool has_been_listed;
 
     public:
         TreeNode(std::string new_name,
@@ -29,6 +30,8 @@ class TreeNode {
         TreeNode * get_parent();
         void set_parent(TreeNode * new_parent);
         std::vector< TreeNode * > get_children();
+        bool get_has_been_listed();
+        void set_has_been_listed(bool new_value);
     };
 
 #endif

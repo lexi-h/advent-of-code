@@ -20,6 +20,7 @@ TreeNode::TreeNode(std::string new_name,
     set_is_file(is_this_a_file);
     set_filesize(new_filesize);
     set_parent(new_parent);
+    set_has_been_listed(false);
 }
 
 std::string TreeNode::get_name(){
@@ -63,4 +64,12 @@ void TreeNode::set_parent(TreeNode * new_parent){
 
 std::vector< TreeNode * > TreeNode::get_children(){
     return children;
+}
+
+bool TreeNode::get_has_been_listed(){
+    return has_been_listed;
+}
+
+void TreeNode::set_has_been_listed(bool new_value){
+    has_been_listed = new_value;
 }
