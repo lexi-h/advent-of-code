@@ -61,3 +61,6 @@ void TreeNode::set_parent(TreeNode * new_parent){
     parent = new_parent;
 }
 
+std::vector< TreeNode * > TreeNode::get_children(){
+    return children;
+}

@@ -28,6 +28,7 @@ class TreeNode {
         void add_child(TreeNode * new_child);
         TreeNode * get_parent();
         void set_parent(TreeNode * new_parent);
+        std::vector< TreeNode * > get_children();
     };
 
 #endif
