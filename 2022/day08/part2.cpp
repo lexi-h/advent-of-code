@@ -2,6 +2,9 @@
 #include <fstream>
 #include <vector>
 
+const int DEBUG_ROW = 10;
+const int DEBUG_COL = 10;
+
 void updatevisibilitymap(const std::vector < std::vector<int> > & treeheight, std::vector < std::vector<int> > & visibilityscore);
 void checkfromwest(const std::vector < std::vector<int> > & treeheight, std::vector < std::vector<int> > & visibilityscore);
 void checkfromeast(const std::vector < std::vector<int> > & treeheight, std::vector < std::vector<int> > & visibilityscore);
@@ -36,6 +39,23 @@ void checkfromwest(const std::vector < std::vector<int> > & treeheight, std::vec
             }
             //determine the score multiplier
             int scoremultiplier = j - nearestobstructionindex;
+
+            //debug printing!
+            if(i == DEBUG_ROW && j == DEBUG_COL){
+                std::cout << "LOCATION: " << i << "," << j;
+                std::cout << " CHECKING FROM WEST.\n";
+                std::cout << "[ ";
+                for(int x = 0; x < 10; ++x){
+                    std::cout << x << ':' << indexlastseen[x] << ", ";
+                }
+                std::cout << "]\n";
+
+                std::cout << "score multiplier: " << scoremultiplier << 
+                    " (nearest obstruction: " << nearestobstructionindex << ")\n";
+
+                std::cout << "vis score: " << visibilityscore[i][j] << 
+                    " -> " << visibilityscore[i][j] * scoremultiplier << "\n\n";
+            }
             
             //apple the score multiplier
             visibilityscore[i][j] *= scoremultiplier;
@@ -55,7 +75,7 @@ void checkfromeast(const std::vector < std::vector<int> > & treeheight, std::vec
         for(int j = treeheight[i].size() - 1; j >= 0; --j){
 
             //find the nearest obstruction by looking at the nearest tree of each height
-            int nearestobstructionindex = 0;
+            int nearestobstructionindex = n;
             //only consider trees of equal or taller height
             for(int k = treeheight[i][j]; k < 10; ++k){
                 //if we find a close tall tree, remember the index
@@ -65,6 +85,23 @@ void checkfromeast(const std::vector < std::vector<int> > & treeheight, std::vec
             }
             //determine the score multiplier
             int scoremultiplier = nearestobstructionindex - j;
+            
+            //debug printing!
+            if(i == DEBUG_ROW && j == DEBUG_COL){
+                std::cout << "LOCATION: " << i << "," << j;
+                std::cout << " CHECKING FROM EAST.\n";
+                std::cout << "[ ";
+                for(int x = 0; x < 10; ++x){
+                    std::cout << x << ':' << indexlastseen[x] << ", ";
+                }
+                std::cout << "]\n";
+
+                std::cout << "score multiplier: " << scoremultiplier << 
+                    " (nearest obstruction: " << nearestobstructionindex << ")\n";
+
+                std::cout << "vis score: " << visibilityscore[i][j] << 
+                    " -> " << visibilityscore[i][j] * scoremultiplier << "\n\n";
+            }
             
             //apple the score multiplier
             visibilityscore[i][j] *= scoremultiplier;
@@ -95,6 +132,22 @@ void checkfromnorth(const std::vector < std::vector<int> > & treeheight, std::ve
             //determine the score multiplier
             int scoremultiplier = j - nearestobstructionindex;
             
+            //debug printing!
+            if(i == DEBUG_ROW && j == DEBUG_COL){
+                std::cout << "LOCATION: " << i << "," << j;
+                std::cout << " CHECKING FROM NORTH.\n";
+                std::cout << "[ ";
+                for(int x = 0; x < 10; ++x){
+                    std::cout << x << ':' << indexlastseen[x] << ", ";
+                }
+                std::cout << "]\n";
+
+                std::cout << "score multiplier: " << scoremultiplier << 
+                    " (nearest obstruction: " << nearestobstructionindex << ")\n";
+
+                std::cout << "vis score: " << visibilityscore[i][j] << 
+                    " -> " << visibilityscore[i][j] * scoremultiplier << "\n\n";
+            }
             //apple the score multiplier
             visibilityscore[j][i] *= scoremultiplier;
 
@@ -108,12 +161,13 @@ void checkfromsouth(const std::vector < std::vector<int> > & treeheight, std::ve
     //for each column of trees
     for(int i = 0; i < treeheight[0].size(); ++i){
         //keeps track of the index where we saw each tree height most recently
-        int indexlastseen [10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        int n = treeheight.size() - 1; //should be 98
+        int indexlastseen [10] = { n, n, n, n, n, n, n, n, n, n };
         //for each tree in the column
         for(int j = treeheight.size() - 1; j >= 0; --j){
 
             //find the nearest obstruction by looking at the nearest tree of each height
-            int nearestobstructionindex = 0;
+            int nearestobstructionindex = n;
             //only consider trees of equal or taller height
             for(int k = treeheight[j][i]; k < 10; ++k){
                 //if we find a close tall tree, remember the index
@@ -124,6 +178,22 @@ void checkfromsouth(const std::vector < std::vector<int> > & treeheight, std::ve
             //determine the score multiplier
             int scoremultiplier = nearestobstructionindex - j;
             
+            //debug printing!
+            if(i == DEBUG_ROW && j == DEBUG_COL){
+                std::cout << "LOCATION: " << i << "," << j;
+                std::cout << " CHECKING FROM SOUTH.\n";
+                std::cout << "[ ";
+                for(int x = 0; x < 10; ++x){
+                    std::cout << x << ':' << indexlastseen[x] << ", ";
+                }
+                std::cout << "]\n";
+
+                std::cout << "score multiplier: " << scoremultiplier << 
+                    " (nearest obstruction: " << nearestobstructionindex << ")\n";
+
+                std::cout << "vis score: " << visibilityscore[i][j] << 
+                    " -> " << visibilityscore[i][j] * scoremultiplier << "\n\n";
+            }
             //apple the score multiplier
             visibilityscore[j][i] *= scoremultiplier;
 
